@@ -1,13 +1,12 @@
 # Financial Portfolio Simulator
 
-## Intro
-- What will the application do?
+## Introduction
+
 The Financial Portfolio Simulator is a robust Java desktop application designed to empower users in simulating their financial investments with ease. In an ever-evolving financial landscape, having a tool that provides education and an opportunity to try your ideas without real life consequences is invaluable.
-- Who will use it?
-Students seeking an understanding of trading stocks and options in the stock market.
-- Why is this project of interest to you?
-I want to understand the Black-Scholes model better be able to calculate Greeks on my own.
-I want to convince myself that if stock prices are a random walk, it is hard to beat the average consistently.
+
+Students seeking an understanding of trading stocks and options in the stock market are the intended users for this project,
+
+I started this project because I want to understand the Black-Scholes model better be able to calculate Greeks on my own. Also, I want to convince myself that if stock prices are a random walk, it is hard to beat the average consistently.
 
 ## User Stories
 
