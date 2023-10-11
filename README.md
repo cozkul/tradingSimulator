@@ -10,7 +10,7 @@ I started this project because I want to convince others and myself that if stoc
 
 ## User Stories
 
-### 1. View Account History
+### 1. View Account
 - *As a user*, I want to be able to **view my balance and positions**, *so that* I can have a clear overview of my current financial standing.
 
 ### 2. View SP500 History
