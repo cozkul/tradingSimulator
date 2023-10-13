@@ -123,12 +123,12 @@ public class AccountTest {
         testAccount.addFund(fundC);
 
         Fund foundA = testAccount.findFund("A500");
-        Fund foundB = testAccount.findFund("A500");
-        Fund foundC = testAccount.findFund("A500");
+        Fund foundB = testAccount.findFund("B500");
+        Fund foundC = testAccount.findFund("C500");
         Fund foundD = testAccount.findFund("D500");
-        assertNotNull(foundA);
-        assertNotNull(foundB);
-        assertNotNull(foundC);
+        assertEquals(firstFund, foundA);
+        assertEquals(fundB, foundB);
+        assertEquals(fundC, foundC);
         assertNull(foundD);
     }
 
