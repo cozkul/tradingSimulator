@@ -10,7 +10,6 @@ import java.util.List;
 
 import static model.Fund.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FundTest {
     private static final double EPSILON = 0.05;
@@ -29,34 +28,29 @@ public class FundTest {
     void testGetAskPrice() {
         assertEquals(100 + ASK_SPREAD, testFund.getAskPrice());
         passOneIntervalTime();
-        assertApproxEquals(100.17 + ASK_SPREAD, testFund.getAskPrice());
+        assertEquals(100.17 + ASK_SPREAD, testFund.getAskPrice(), EPSILON);
     }
 
     @Test
     void testGetBidPrice() {
         assertEquals(100 + ASK_SPREAD, testFund.getAskPrice());
         passOneIntervalTime();
-        assertApproxEquals(100.17 - BID_SPREAD, testFund.getAskPrice());
+        assertEquals(100.17 - BID_SPREAD, testFund.getAskPrice(), EPSILON);
     }
 
     @Test
     void testGetHistory() {
         List<Double> history = testFund.getHistory();
         assertEquals(1, history.size());
-        assertApproxEquals(100, history.get(0));
+        assertEquals(100, history.get(0), EPSILON);
         passOneIntervalTime();
         passOneIntervalTime();
         testFund.getHistory();
         assertEquals(3, history.size());
-        assertApproxEquals(100, history.get(0));
-        assertApproxEquals(100.17, history.get(1));
-        assertApproxEquals(100.32, history.get(2));
+        assertEquals(100, history.get(0), EPSILON);
+        assertEquals(100.17, history.get(1), EPSILON);
+        assertEquals(100.32, history.get(2), EPSILON);
         System.out.println(history);
-    }
-
-    void assertApproxEquals(double a, double b) {
-        assertTrue(b < a + EPSILON);
-        assertTrue(a - EPSILON < b);
     }
 
     void passOneIntervalTime() {

@@ -57,13 +57,13 @@ public class AccountTest {
 
     @Test
     void testBuyFundAtAskPrice() {
-        assertApproxEquals(1000, testAccount.getBalance());
+        assertEquals(1000, testAccount.getBalance(), EPSILON);
         try {
             testAccount.buyFundAtAskPrice(5, firstFund);
         } catch (Exception ignored) {
             fail();
         }
-        assertApproxEquals((1000 - 5 * (100 + ASK_SPREAD)), testAccount.getBalance());
+        assertEquals((1000 - 5 * (100 + ASK_SPREAD)), testAccount.getBalance(), EPSILON);
         assertEquals(5, firstFund.getPosition());
     }
 
@@ -75,16 +75,17 @@ public class AccountTest {
 
     @Test
     void testSellFundAtBidPrice() {
-        assertApproxEquals(1000, testAccount.getBalance());
+        assertEquals(1000, testAccount.getBalance(), EPSILON);
         try {
             testAccount.buyFundAtAskPrice(5, firstFund);
             testAccount.sellFundAtBidPrice(3, firstFund);
         } catch (Exception ignored) {
             fail();
         }
-        assertApproxEquals(
+        assertEquals(
                 (1000 - 5 * (100 + ASK_SPREAD) + 3 * (100 - BID_SPREAD)),
-                testAccount.getBalance()
+                testAccount.getBalance(),
+                EPSILON
         );
         assertEquals(2, firstFund.getPosition());
     }
@@ -130,10 +131,5 @@ public class AccountTest {
         assertEquals(fundB, foundB);
         assertEquals(fundC, foundC);
         assertNull(foundD);
-    }
-
-    void assertApproxEquals(double a, double b) {
-        assertTrue(b < a + EPSILON);
-        assertTrue(a - EPSILON < b);
     }
 }
