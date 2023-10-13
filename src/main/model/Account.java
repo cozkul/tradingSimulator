@@ -32,7 +32,7 @@ public class Account {
      * REQUIRES: fund not null
      * MODIFIES: this
      * EFFECTS: Adds the input fund to the account if the ticker
-     *          is unique to the provided fund.
+     *          is unique for the provided fund.
      */
     public void addFund(Fund fund) {
         if (findFund(fund.getTicker()) == null) {
@@ -41,7 +41,7 @@ public class Account {
     }
 
     /*
-     * REQUIRES: fund not null
+     * REQUIRES: fund not null, order > 0
      * MODIFIES: this
      * EFFECTS: if the ask price of the fund multiplied by
      *          order amount is greater than account balance,
@@ -59,7 +59,7 @@ public class Account {
     }
 
     /*
-     * REQUIRES: fund not null
+     * REQUIRES: fund not null, order > 0
      * MODIFIES: this
      * EFFECTS: if the order amount is greater than funds owned in the
      *          account an InsufficientFundException is thrown, otherwise
@@ -75,7 +75,7 @@ public class Account {
     }
 
     /*
-     * REQUIRES: name not null
+     * REQUIRES: ticker not null
      * EFFECTS: Searches the list of funds for the given ticker
      *          returns a reference if it can find the fund, returns
      *          null if it cannot.

@@ -34,32 +34,24 @@ public class Main {
     /*
      * EFFECTS: Dispatches user input to appropriate function.
      */
-    @SuppressWarnings("methodlength")
     private static void processActions(String action) {
-        switch (action) {
-            case "acc":
-                printAccountSummary();
-                break;
-            case "quote":
-                printQuote();
-                break;
-            case "hist":
-                printHistory();
-                break;
-            case "buy":
-                executeBuy();
-                break;
-            case "sell":
-                executeSell();
-                break;
-            case "add":
-                addFund();
-                break;
-            case "list":
-                printAllFunds();
-                break;
-            default:
-                System.out.println("Invalid input. Please try again.");
+        // Not using switch only for function length requirements
+        if (action.equals("acc")) {
+            printAccountSummary();
+        } else if (action.equals("quote")) {
+            printQuote();
+        } else if (action.equals("hist")) {
+            printHistory();
+        } else if (action.equals("buy")) {
+            executeBuy();
+        } else if (action.equals("sell")) {
+            executeSell();
+        } else if (action.equals("add")) {
+            executeAddFund();
+        } else if (action.equals("list")) {
+            printAllFunds();
+        } else {
+            System.out.println("Invalid input. Please try again.");
         }
     }
 
@@ -70,7 +62,7 @@ public class Main {
      * EFFECTS: Presents inputs for ETF creation. Creates an ETF and calls
      *          account.addFund(...) with the inputs from the user.
      */
-    private static void addFund() {
+    private static void executeAddFund() {
         System.out.print("Please enter ticker for ETF: ");
         String ticker = scanner.nextLine();
 
@@ -204,7 +196,7 @@ public class Main {
     /*
      * REQUIRES: Clean input from user. Strings when prompted
      *           for name, double when prompted for number.
-     * MODIFIES: account
+     * MODIFIES: this, account
      * EFFECTS: Prompts user for account information input, name
      *          and initial balance. Creates an account for the user.
      *          Sets up an initial ETF SP500 available to be traded and

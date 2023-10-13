@@ -28,7 +28,7 @@ public class Fund {
     private int fundPosition;                   // Number uf funds account owns
 
     /*
-     * REQUIRES: ticker.length() > 0
+     * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0
      * EFFECTS: A representation of an ETF is created with the input parameters,
      *          ticker, initial price, yearly return and volatility are set
      */
@@ -42,7 +42,7 @@ public class Fund {
     }
 
     /*
-     * REQUIRES: ticker.length() > 0
+     * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0
      * EFFECTS: A representation of an ETF is created with the input parameters,
      *          ticker, initial price, yearly return and volatility are set, last history
      *          update is set to provided Instant now.
@@ -88,12 +88,12 @@ public class Fund {
 
     /*
      * MODIFIES: this
-     * EFFECTS: If tradingDaysPassed() are greater than 0,
-     *          then a history is generated using a random number
-     *          for total days passed. Updates the last history
+     * EFFECTS: If real time passed is greater than set UPDATE_INTERVAL,
+     *          then a history is generated using a random return
+     *          for total days passed. Stores the time of the last history
      *          update for future reference.
      */
-    private void updateHistory() {
+    public void updateHistory() {
         for (int i = tradingDaysPassed() - 1; i >= 0; i--) {
             history.add(lastPrice() * randomReturn());
             lastHistoryUpdate = now();
@@ -101,7 +101,7 @@ public class Fund {
     }
 
     /*
-     * EFFECTS: Returns Instant.now() Function for mocking purposes.
+     * EFFECTS: Returns Instant.now(). Function for mocking purposes.
      */
     protected Instant now() {
         return Instant.now();
@@ -119,12 +119,12 @@ public class Fund {
     }
 
     /*
-     * EFFECTS: Generate a random return using stander deviation
+     * EFFECTS: Generate a random return using standard deviation
      *          and percent return per day.
      */
     protected double randomReturn() {
-        return random.nextGaussian() * stdDevPerDay() // Adjust standard normal
-                + returnPerDay();                     // distribution to desired normal dist.
+        // Adjust standard normal distribution to desired normal dist.
+        return random.nextGaussian() * stdDevPerDay() + returnPerDay();
     }
 
     /*

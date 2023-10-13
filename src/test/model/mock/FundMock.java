@@ -14,13 +14,13 @@ public class FundMock extends Fund {
 
     @Override
     protected double randomReturn() {
-        super.randomReturn(); // Just for code coverage
+        // super.randomReturn();
         return returnPerDay();
     }
 
     @Override
     protected Instant now() {
-        super.now(); // Just for code coverage
+        // super.now();
         return this.now;
     }
 
