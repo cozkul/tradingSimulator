@@ -5,7 +5,6 @@ import model.Fund;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FundMock extends Fund {
     Instant now;
