@@ -104,15 +104,14 @@ public class Main {
      *          executed or not.
      */
     private static void executeSell() {
-        System.out.print("Please enter ticker to sell: ");
-        String ticker = scanner.nextLine();
+        Fund fund = inputFund();
 
         System.out.print("Please enter order amount: ");
         int order = Integer.parseInt(scanner.nextLine());
 
         try {
-            account.sellFundAtBidPrice(order, account.findFund(ticker));
-            System.out.print("Order successfully executed.");
+            account.sellFundAtBidPrice(order, fund);
+            System.out.print("Order successfully executed. ");
         } catch (InsufficientFundsException e) {
             System.out.print("You do not have enough of this position to sell.");
         }
@@ -130,17 +129,16 @@ public class Main {
      *          executed or not.
      */
     private static void executeBuy() {
-        System.out.print("Please enter ticker to buy: ");
-        String ticker = scanner.nextLine();
+        Fund fund = inputFund();
 
         System.out.print("Please enter order amount: ");
         int order = Integer.parseInt(scanner.nextLine());
 
         try {
-            account.buyFundAtAskPrice(order, account.findFund(ticker));
+            account.buyFundAtAskPrice(order, fund);
             System.out.print("Order successfully executed.");
         } catch (InsufficientBalanceException e) {
-            System.out.print("You do not have enough cash.");
+            System.out.print("You do not have enough cash. ");
         }
 
         printAccountSummary();
@@ -154,6 +152,7 @@ public class Main {
         Fund fund = inputFund();
         System.out.println("Price history for " + fund.getTicker() + ":");
         System.out.println(fund.getHistory());
+        System.out.println("Each item in list represents a day.");
     }
 
     /*
@@ -167,7 +166,7 @@ public class Main {
         String askPrice = String.format("%.2f", fund.getAskPrice());
 
         System.out.println("Current bid price: $" + bidPrice
-                + ", and ask price: $" + askPrice + ".");
+                + ", ask price: $" + askPrice);
     }
 
     /*

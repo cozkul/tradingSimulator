@@ -70,7 +70,7 @@ public class AccountTest {
     @Test
     void testBuyFundAtAskPriceException() {
         assertThrows(InsufficientBalanceException.class, () ->
-                testAccount.buyFundAtAskPrice(500, firstFund));
+                testAccount.buyFundAtAskPrice(11, firstFund));
     }
 
     @Test
@@ -78,22 +78,22 @@ public class AccountTest {
         assertEquals(1000, testAccount.getBalance(), EPSILON);
         try {
             testAccount.buyFundAtAskPrice(5, firstFund);
-            testAccount.sellFundAtBidPrice(3, firstFund);
+            testAccount.sellFundAtBidPrice(4, firstFund);
         } catch (Exception ignored) {
             fail();
         }
         assertEquals(
-                (1000 - 5 * (100 + ASK_SPREAD) + 3 * (100 - BID_SPREAD)),
+                (1000 - 5 * (100 + ASK_SPREAD) + 4 * (100 - BID_SPREAD)),
                 testAccount.getBalance(),
                 EPSILON
         );
-        assertEquals(2, firstFund.getPosition());
+        assertEquals(1, firstFund.getPosition());
     }
 
     @Test
     void testSellFundAtBidPriceException() {
         assertThrows(InsufficientFundsException.class, () ->
-                testAccount.sellFundAtBidPrice(500, firstFund));
+                testAccount.sellFundAtBidPrice(1, firstFund));
     }
 
     @Test
