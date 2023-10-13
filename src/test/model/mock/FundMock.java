@@ -4,6 +4,9 @@ import model.Fund;
 
 import java.time.Instant;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FundMock extends Fund {
     Instant now;
 
@@ -14,13 +17,15 @@ public class FundMock extends Fund {
 
     @Override
     protected double randomReturn() {
-        // super.randomReturn();
+        Double temp = super.randomReturn();
+        assertNotNull(temp);
         return returnPerDay();
     }
 
     @Override
     protected Instant now() {
-        // super.now();
+        Instant temp = super.now();
+        assertNotNull(temp);
         return this.now;
     }
 
