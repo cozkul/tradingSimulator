@@ -48,11 +48,7 @@ public class Fund {
      *          update is set to provided Instant now.
      */
     protected Fund(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
-        this.tickerSymbol = ticker;
-        this.yearlyReturn = yearlyReturn;
-        this.volatility = volatility;
-        history = new ArrayList<>();
-        history.add(initialPrice);
+        this(ticker, initialPrice, yearlyReturn, volatility);
         lastHistoryUpdate = now;
     }
 
