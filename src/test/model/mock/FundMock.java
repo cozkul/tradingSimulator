@@ -10,8 +10,9 @@ public class FundMock extends Fund {
     Instant now;
 
     public FundMock(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
-        super(ticker, initialPrice, yearlyReturn, volatility, now);
+        super(ticker, initialPrice, yearlyReturn, volatility);
         this.now = now;
+        this.lastHistoryUpdate = now;
     }
 
     @Override

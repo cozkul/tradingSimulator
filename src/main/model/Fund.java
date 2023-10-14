@@ -24,7 +24,7 @@ public class Fund {
     private final double volatility;            // Annual standard deviation of the percent return
 
     private final List<Double> history;         // Price history stored in this list
-    private Instant lastHistoryUpdate;          // Time of last history update
+    protected Instant lastHistoryUpdate;          // Time of last history update
     private int fundPosition;                   // Number uf funds account owns
 
     /*
@@ -38,18 +38,7 @@ public class Fund {
         this.volatility = volatility;
         history = new ArrayList<>();
         history.add(initialPrice);
-        lastHistoryUpdate = Instant.now();
-    }
-
-    /*
-     * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0
-     * EFFECTS: A representation of an ETF is created with the input parameters,
-     *          ticker, initial price, yearly return and volatility are set, last history
-     *          update is set to provided Instant now.
-     */
-    protected Fund(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
-        this(ticker, initialPrice, yearlyReturn, volatility);
-        lastHistoryUpdate = now;
+        lastHistoryUpdate = now();
     }
 
     /*
