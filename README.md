@@ -27,3 +27,9 @@ I started this project because I want to demonstrate that if stock prices are a 
 
 ### 6. List Existing ETFs
 - *As a user*, I want to be able to **view existing ETFs**, *so that* I can remember which ETFs are being simulated.
+
+### 7. Save Simulation
+- *As a user*, I want to be able to **save the simulation**, *so that* I continue the simulation at a later date if I so choose.
+
+### 8. Load Simulation
+- *As a user*, I want to be able to **load the simulation**, *so that* I continue with simulation if I choose so.
