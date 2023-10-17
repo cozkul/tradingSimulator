@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,7 +14,7 @@ import java.util.Random;
  * Represents an ETF available for trading.
  * Maintains a price history and amount of position held by the account.
  */
-public class Fund {
+public class Fund implements Writable {
     private final Random random = new Random(1);
 
     public static final int UPDATE_INTERVAL = 15;        // History update interval in seconds. At least 2.
@@ -20,11 +24,12 @@ public class Fund {
     public static final double BID_SPREAD = 0.01;         // Difference of mean and bid price in dollars
 
     private final String tickerSymbol;          // Ticker symbol that represents fund
+
     protected final double yearlyReturn;        // Average annual percent return of the fund
     private final double volatility;            // Annual standard deviation of the percent return
 
     private final List<Double> history;         // Price history stored in this list
-    protected Instant lastHistoryUpdate;          // Time of last history update
+    protected Instant lastHistoryUpdate;        // Time of last history update
     private int fundPosition;                   // Number uf funds account owns
 
     /*
@@ -36,10 +41,28 @@ public class Fund {
         this.tickerSymbol = ticker;
         this.yearlyReturn = yearlyReturn;
         this.volatility = volatility;
-        history = new ArrayList<>();
+        this.history = new ArrayList<>();
         history.add(initialPrice);
-        lastHistoryUpdate = now();
+        this.lastHistoryUpdate = now();
     }
+
+    /*
+     * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0,
+     *           history not null, lastUpdate not null, fundPosition > 0
+     * EFFECTS: A representation of an ETF is created with the input parameters,
+     *          ticker, initial price, yearly return, volatility, fundPosition and lastUpdate.
+     *          The fund starts maintaining the history provided.
+     */
+    public Fund(String ticker, double yearlyReturn, double volatility, List<Double> history,
+                Instant lastUpdate, int fundPosition) {
+        this.tickerSymbol = ticker;
+        this.yearlyReturn = yearlyReturn;
+        this.volatility = volatility;
+        this.history = history;
+        this.lastHistoryUpdate = lastUpdate;
+        this.fundPosition = fundPosition;
+    }
+
 
     /*
      * MODIFIES: this
@@ -130,6 +153,32 @@ public class Fund {
         return volatility / Math.sqrt(TRADING_DAYS_PER_INTERVAL);
     }
 
+    /*
+     * EFFECTS: returns this Fund as a JSON object
+     */
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("ticker", tickerSymbol);
+        json.put("yearlyReturn", yearlyReturn);
+        json.put("volatility", volatility);
+        json.put("history", historyToJson());
+        json.put("lastUpdate", lastHistoryUpdate.toString());
+        json.put("fundPosition", fundPosition);
+        return json;
+    }
+
+    /*
+     * EFFECTS: returns the history as a JSON array
+     */
+    private JSONArray historyToJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (Double d : history) {
+            jsonArray.put(d);
+        }
+        return jsonArray;
+    }
+
     public int getFundPosition() {
         return fundPosition;
     }
@@ -144,5 +193,17 @@ public class Fund {
 
     public int getPosition() {
         return fundPosition;
+    }
+
+    public double getYearlyReturn() {
+        return yearlyReturn;
+    }
+
+    public double getVolatility() {
+        return volatility;
+    }
+
+    public Instant getLastHistoryUpdate() {
+        return lastHistoryUpdate;
     }
 }
