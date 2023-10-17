@@ -2,6 +2,9 @@ package model;
 
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +13,7 @@ import java.util.List;
  * Represents an account having owner name, balance (in dollars), and portfolio of funds.
  * Maintains a list of funds, and other account details
  */
-public class Account {
+public class Account implements Writable {
     private final String name;             // the account owner name
     private double balance;                // the current balance of the account
     private final List<Fund> funds;        // the ETFs allowed to be traded in this account
@@ -26,6 +29,17 @@ public class Account {
         funds = new ArrayList<>();
         funds.add(firstFund);
         balance = initialBalance;
+    }
+
+    /*
+     * REQUIRES: accountName.length() > 0, funds not null, initialBalance > 0
+     * EFFECTS: name of account is set to accountName, initial balance is
+     *          set to initialBalance. Account starts maintaining the list funds.
+     */
+    public Account(String accountName, double balance, List<Fund> funds) {
+        this.name = accountName;
+        this.funds = funds;
+        this.balance = balance;
     }
 
     /*
@@ -108,11 +122,38 @@ public class Account {
         return ret.toString();
     }
 
+    /*
+     * EFFECTS: returns this account as a JSON object
+     */
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("balance", balance);
+        json.put("funds", fundsToJson());
+        return json;
+    }
+
+    /*
+     * EFFECTS: returns funds in this account as a JSON array
+     */
+    private JSONArray fundsToJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (Fund f : funds) {
+            jsonArray.put(f.toJson());
+        }
+        return jsonArray;
+    }
+
     public List<Fund> getFunds() {
         return funds;
     }
 
     public double getBalance() {
         return balance;
+    }
+
+    public String getName() {
+        return name;
     }
 }
