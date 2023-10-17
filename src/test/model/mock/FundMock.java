@@ -3,16 +3,28 @@ package model.mock;
 import model.Fund;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FundMock extends Fund {
+    Instant lastTime;
     Instant now;
 
     public FundMock(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
         super(ticker, initialPrice, yearlyReturn, volatility);
         this.now = now;
+        this.lastTime = now.plus(1, ChronoUnit.SECONDS);
         this.lastHistoryUpdate = now;
+    }
+
+    public FundMock(String ticker, double yearlyReturn, double volatility, List<Double> history,
+                    Instant now, int fundPosition) {
+        super(ticker, yearlyReturn, volatility, history, now, fundPosition);
+        this.now = now;
+        this.lastTime = now.plus(1, ChronoUnit.SECONDS);
+
     }
 
     @Override
@@ -31,5 +43,17 @@ public class FundMock extends Fund {
 
     public void setNow(Instant now) {
         this.now = now;
+    }
+
+    public void passOneIntervalTime() {
+        Instant later = lastTime.plus(UPDATE_INTERVAL, ChronoUnit.SECONDS);
+        setNow(later);
+        lastTime = later;
+    }
+
+    public void passManyIntervalTime(int t) {
+        for (int i = 0; i < t; i++) {
+            passOneIntervalTime();
+        }
     }
 }
