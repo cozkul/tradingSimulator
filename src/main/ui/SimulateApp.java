@@ -4,14 +4,24 @@ import model.Account;
 import model.Fund;
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+
+import static java.lang.System.exit;
 
 /*
  * Represents the Simulate App. Maintains an account.
  */
 public class SimulateApp {
+    private static final String JSON_STORE = "./data/user.json";
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
+
     private final Scanner scanner;
     private Account account;
 
@@ -20,6 +30,8 @@ public class SimulateApp {
     */
     public SimulateApp() {
         scanner = new Scanner(System.in);
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         run();
     }
 
@@ -32,8 +44,8 @@ public class SimulateApp {
         while (true) {
             printMenu();
             String action = scanner.nextLine();
-            if (action.equals("exit")) {
-                break;
+            if (action.contains("new")) {
+                action = "";
             }
             processActions(action);
         }
@@ -42,37 +54,68 @@ public class SimulateApp {
     /*
      * EFFECTS: Dispatches user input to appropriate function.
      */
+    @SuppressWarnings("methodlength")
     private void processActions(String action) {
-        // Not using switch only for function length requirements
-        if (action.equals("acc")) {
-            printAccountSummary();
-        } else if (action.equals("quote")) {
-            printQuote();
-        } else if (action.equals("hist")) {
-            printHistory();
-        } else if (action.equals("buy")) {
-            executeBuy();
-        } else if (action.equals("sell")) {
-            executeSell();
-        } else if (action.equals("add")) {
-            executeAddFund();
-        } else if (action.equals("list")) {
-            printAllFunds();
-        } else if (action.equals("save")) {
-            saveState();
-        } else if (action.equals("load")) {
-            loadState();
-        } else {
-            System.out.println("Invalid input. Please try again.");
+        switch (action) {
+            case "acc":
+                printAccountSummary();
+                break;
+            case "quote":
+                printQuote();
+                break;
+            case "hist":
+                printHistory();
+                break;
+            case "buy":
+                executeBuy();
+                break;
+            case "sell":
+                executeSell();
+                break;
+            case "add":
+                executeAddFund();
+                break;
+            case "list":
+                printAllFunds();
+                break;
+            case "save":
+                saveState();
+                break;
+            case "load":
+                loadState();
+                break;
+            case "new":
+                createAccount();
+                break;
+            case "exit":
+                exit(0);
+            default:
+                System.out.println("Invalid input. Please try again.");
+                break;
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: loads account from file
     private void loadState() {
-        // STUB
+        try {
+            account = jsonReader.read();
+            System.out.println("Loaded " + account.getName() + " from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
     }
 
+    // EFFECTS: saves the account to file
     private void saveState() {
-        // STUB
+        try {
+            jsonWriter.open();
+            jsonWriter.write(account);
+            jsonWriter.close();
+            System.out.println("Saved " + account.getName() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
     }
 
     /*
@@ -209,7 +252,29 @@ public class SimulateApp {
         System.out.println("(sell) : Sell ETF At Current Bid Price");
         System.out.println("(add)  : Add an ETF to the simulation");
         System.out.println("(list) : List all ETFs that the account is authorized to trade");
+        System.out.println("(load) : Load from a previous save file");
+        System.out.println("(save) : Save current state to a file");
         System.out.println("(exit) : Exit");
+    }
+
+    /*
+     * EFFECTS: Provides user options for creating an account or
+     *          load data.
+     */
+    private void initialize() {
+        System.out.println("Welcome to ETF Trading Simulator");
+        System.out.println("You can simulate buying and selling an ETF without real life consequences.\n");
+        while (account == null) {
+            System.out.println("Please select to create a new account or load a previous save:");
+            System.out.println("(load) : Load from a previous save file");
+            System.out.println("(new)  : Create a new account");
+            System.out.println("(exit) : Exit");
+            String action = scanner.nextLine();
+            if (!(action.contains("new") || action.contains("load") || action.contains("exit"))) {
+                action = "";
+            }
+            processActions(action);
+        }
     }
 
     /*
@@ -221,9 +286,7 @@ public class SimulateApp {
      *          Sets up an initial ETF SP500 available to be traded and
      *          adds this to the account.
      */
-    private void initialize() {
-        System.out.println("Welcome to ETF Trading Simulator");
-        System.out.println("You can simulate buying and selling an ETF without real life consequences.");
+    private void createAccount() {
         System.out.print("Please enter your name: ");
         String name = scanner.nextLine();
         System.out.print("Please enter initial balance in USD. "
