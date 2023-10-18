@@ -45,6 +45,5 @@ public class FundTest {
         assertEquals(100, history.get(0), EPSILON);
         assertEquals(100.17, history.get(1), EPSILON);
         assertEquals(100.32, history.get(2), EPSILON);
-        System.out.println(history);
     }
 }
