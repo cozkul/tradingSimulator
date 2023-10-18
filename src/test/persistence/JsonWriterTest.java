@@ -9,7 +9,6 @@ import persistence.mock.JsonReaderMock;
 import java.io.IOException;
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class JsonWriterTest extends JsonTest {

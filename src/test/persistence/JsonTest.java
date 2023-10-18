@@ -3,9 +3,6 @@ package persistence;
 import model.Account;
 import model.Fund;
 
-import java.time.Instant;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonTest {

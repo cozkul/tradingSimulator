@@ -1,7 +1,6 @@
 package persistence;
 
 import model.Account;
-import model.Fund;
 import model.mock.FundMock;
 import org.junit.jupiter.api.Test;
 import persistence.mock.JsonReaderMock;
