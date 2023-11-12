@@ -1,6 +1,6 @@
 package model.mock;
 
-import model.Fund;
+import model.Security;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -8,19 +8,19 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FundMock extends Fund {
+public class SecurityMock extends Security {
     Instant lastTime;
     Instant now;
 
-    public FundMock(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
+    public SecurityMock(String ticker, double initialPrice, double yearlyReturn, double volatility, Instant now) {
         super(ticker, initialPrice, yearlyReturn, volatility);
         this.now = now;
         this.lastTime = now.plus(1, ChronoUnit.SECONDS);
         this.lastHistoryUpdate = now;
     }
 
-    public FundMock(String ticker, double yearlyReturn, double volatility, List<Double> history,
-                    Instant now, int fundPosition) {
+    public SecurityMock(String ticker, double yearlyReturn, double volatility, List<Double> history,
+                        Instant now, int fundPosition) {
         super(ticker, yearlyReturn, volatility, history, now, fundPosition);
         this.now = now;
         this.lastTime = now.plus(1, ChronoUnit.SECONDS);

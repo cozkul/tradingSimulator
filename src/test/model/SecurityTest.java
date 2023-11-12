@@ -1,23 +1,23 @@
 package model;
 
-import model.mock.FundMock;
+import model.mock.SecurityMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.List;
 
-import static model.Fund.*;
+import static model.Security.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FundTest {
+public class SecurityTest {
     private static final double EPSILON = 0.05;
 
-    FundMock testFund;
+    SecurityMock testFund;
 
     @BeforeEach
     void runBefore() {
-        testFund = new FundMock("A", 100, 0.5, 0, Instant.now());
+        testFund = new SecurityMock("A", 100, 0.5, 0, Instant.now());
     }
 
     @Test

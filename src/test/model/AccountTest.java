@@ -2,83 +2,83 @@ package model;
 
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
-import model.mock.FundMock;
+import model.mock.SecurityMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.List;
 
-import static model.Fund.*;
+import static model.Security.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AccountTest {
     private static final double EPSILON = 0.05;
 
     Account testAccount;
-    Fund firstFund;
+    Security firstSecurity;
     Instant now;
 
     @BeforeEach
     void runBefore() {
         now = Instant.now();
-        firstFund = new FundMock("A500", 100, 0.5, 0, now);
-        testAccount = new Account("John Smith", 1000, firstFund);
+        firstSecurity = new SecurityMock("A500", 100, 0.5, 0, now);
+        testAccount = new Account("John Smith", 1000, firstSecurity);
     }
 
     @Test
     void testAddFundOnce() {
-        List<Fund> funds = testAccount.getFunds();
-        assertEquals(1, funds.size());
-        assertEquals(firstFund, funds.get(0));
-        Fund fundB = new FundMock("B500", 200, 0.5, 0, now);
-        testAccount.addFund(fundB);
-        assertEquals(2, funds.size());
-        assertEquals(firstFund, funds.get(0));
-        assertEquals(fundB, funds.get(1));
+        List<Security> securities = testAccount.getFunds();
+        assertEquals(1, securities.size());
+        assertEquals(firstSecurity, securities.get(0));
+        Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
+        testAccount.addFund(securityB);
+        assertEquals(2, securities.size());
+        assertEquals(firstSecurity, securities.get(0));
+        assertEquals(securityB, securities.get(1));
     }
 
     @Test
     void testAddFundMultiple() {
-        List<Fund> funds = testAccount.getFunds();
-        Fund fundB = new FundMock("B500", 200, 0.5, 0, now);
-        Fund fundC = new FundMock("C500", 200, 0.5, 0, now);
+        List<Security> securities = testAccount.getFunds();
+        Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
+        Security securityC = new SecurityMock("C500", 200, 0.5, 0, now);
         // FundD with duplicate ticker should not be added.
-        Fund fundD = new FundMock("C500", 200, 0.5, 0, now);
-        testAccount.addFund(fundB);
-        testAccount.addFund(fundC);
-        testAccount.addFund(fundD);
+        Security securityD = new SecurityMock("C500", 200, 0.5, 0, now);
+        testAccount.addFund(securityB);
+        testAccount.addFund(securityC);
+        testAccount.addFund(securityD);
 
-        assertEquals(3, funds.size());
-        assertEquals(firstFund, funds.get(0));
-        assertEquals(fundB, funds.get(1));
-        assertEquals(fundC, funds.get(2));
+        assertEquals(3, securities.size());
+        assertEquals(firstSecurity, securities.get(0));
+        assertEquals(securityB, securities.get(1));
+        assertEquals(securityC, securities.get(2));
     }
 
     @Test
     void testBuyFundAtAskPrice() {
         assertEquals(1000, testAccount.getBalance(), EPSILON);
         try {
-            testAccount.buyFundAtAskPrice(5, firstFund);
+            testAccount.buyFundAtAskPrice(5, firstSecurity);
         } catch (Exception ignored) {
             fail();
         }
         assertEquals((1000 - 5 * (100 + ASK_SPREAD)), testAccount.getBalance(), EPSILON);
-        assertEquals(5, firstFund.getPosition());
+        assertEquals(5, firstSecurity.getPosition());
     }
 
     @Test
     void testBuyFundAtAskPriceException() {
         assertThrows(InsufficientBalanceException.class, () ->
-                testAccount.buyFundAtAskPrice(11, firstFund));
+                testAccount.buyFundAtAskPrice(11, firstSecurity));
     }
 
     @Test
     void testSellFundAtBidPrice() {
         assertEquals(1000, testAccount.getBalance(), EPSILON);
         try {
-            testAccount.buyFundAtAskPrice(5, firstFund);
-            testAccount.sellFundAtBidPrice(4, firstFund);
+            testAccount.buyFundAtAskPrice(5, firstSecurity);
+            testAccount.sellFundAtBidPrice(4, firstSecurity);
         } catch (Exception ignored) {
             fail();
         }
@@ -87,13 +87,13 @@ public class AccountTest {
                 testAccount.getBalance(),
                 EPSILON
         );
-        assertEquals(1, firstFund.getPosition());
+        assertEquals(1, firstSecurity.getPosition());
     }
 
     @Test
     void testSellFundAtBidPriceException() {
         assertThrows(InsufficientFundsException.class, () ->
-                testAccount.sellFundAtBidPrice(1, firstFund));
+                testAccount.sellFundAtBidPrice(1, firstSecurity));
     }
 
     @Test
@@ -104,12 +104,12 @@ public class AccountTest {
         );
 
         try {
-            testAccount.buyFundAtAskPrice(5, firstFund);
+            testAccount.buyFundAtAskPrice(5, firstSecurity);
         } catch (Exception ignored) {
             fail();
         }
-        Fund fundB = new FundMock("B500", 200, 0.5, 0, now);
-        testAccount.addFund(fundB);
+        Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
+        testAccount.addFund(securityB);
         assertEquals(
                 "[ name: John Smith, cash: $499.95, A500 position: 5, B500 position: 0 ]",
                 testAccount.toString()
@@ -118,18 +118,18 @@ public class AccountTest {
 
     @Test
     void testFindFund() {
-        Fund fundB = new FundMock("B500", 200, 0.5, 0, now);
-        Fund fundC = new FundMock("C500", 200, 0.5, 0, now);
-        testAccount.addFund(fundB);
-        testAccount.addFund(fundC);
+        Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
+        Security securityC = new SecurityMock("C500", 200, 0.5, 0, now);
+        testAccount.addFund(securityB);
+        testAccount.addFund(securityC);
 
-        Fund foundA = testAccount.findFund("A500");
-        Fund foundB = testAccount.findFund("B500");
-        Fund foundC = testAccount.findFund("C500");
-        Fund foundD = testAccount.findFund("D500");
-        assertEquals(firstFund, foundA);
-        assertEquals(fundB, foundB);
-        assertEquals(fundC, foundC);
+        Security foundA = testAccount.findFund("A500");
+        Security foundB = testAccount.findFund("B500");
+        Security foundC = testAccount.findFund("C500");
+        Security foundD = testAccount.findFund("D500");
+        assertEquals(firstSecurity, foundA);
+        assertEquals(securityB, foundB);
+        assertEquals(securityC, foundC);
         assertNull(foundD);
     }
 }

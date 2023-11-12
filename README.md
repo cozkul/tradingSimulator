@@ -1,4 +1,4 @@
-# ETF Timing Simulator
+# Trading Simulator
 
 ## Introduction
 

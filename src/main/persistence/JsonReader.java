@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import model.Account;
-import model.Fund;
+import model.Security;
 import org.json.*;
 
 // Represents a reader that reads workroom from JSON data stored in file
 public class JsonReader {
-    private final String source;
+    private final String source; // Destination for
 
     // EFFECTS: constructs reader to read from source file
     public JsonReader(String source) {
@@ -45,23 +45,23 @@ public class JsonReader {
     private Account parseAccount(JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         double balance = jsonObject.getDouble("balance");
-        List<Fund> funds = makeFunds(jsonObject.getJSONArray("funds"));
+        List<Security> securities = makeFunds(jsonObject.getJSONArray("securities"));
 
-        return new Account(name, balance, funds);
+        return new Account(name, balance, securities);
     }
 
     // EFFECTS: parses a list of funds from JSON array and returns it
-    private List<Fund> makeFunds(JSONArray jsonFunds) {
-        List<Fund> funds = new ArrayList<>();
+    private List<Security> makeFunds(JSONArray jsonFunds) {
+        List<Security> securities = new ArrayList<>();
         for (Object json : jsonFunds) {
-            Fund fund = makeFund((JSONObject) json);
-            funds.add(fund);
+            Security security = makeFund((JSONObject) json);
+            securities.add(security);
         }
-        return funds;
+        return securities;
     }
 
-    // EFFECTS: parses a Fund from JSON object and returns it
-    protected Fund makeFund(JSONObject jsonObject) {
+    // EFFECTS: parses a Security from JSON object and returns it
+    protected Security makeFund(JSONObject jsonObject) {
         String ticker = jsonObject.getString("ticker");
         double yearlyReturn = jsonObject.getDouble("yearlyReturn");
         double volatility = jsonObject.getDouble("volatility");
@@ -69,7 +69,7 @@ public class JsonReader {
         Instant lastUpdate = Instant.parse(jsonObject.getString("lastUpdate"));
         int fundPosition = jsonObject.getInt("fundPosition");
 
-        return new Fund(ticker,
+        return new Security(ticker,
                 yearlyReturn,
                 volatility,
                 history,

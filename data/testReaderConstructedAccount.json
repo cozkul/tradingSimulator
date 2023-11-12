@@ -1,7 +1,7 @@
 {
     "balance": 1000,
     "name": "John Smith",
-    "funds": [{
+    "securities": [{
         "ticker": "A500",
         "lastUpdate": "2023-10-17T04:33:00.144500Z",
         "yearlyReturn": 0.5,

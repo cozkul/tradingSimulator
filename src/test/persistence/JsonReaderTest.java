@@ -1,7 +1,7 @@
 package persistence;
 
 import model.Account;
-import model.mock.FundMock;
+import model.mock.SecurityMock;
 import org.junit.jupiter.api.Test;
 import persistence.mock.JsonReaderMock;
 
@@ -26,7 +26,7 @@ class JsonReaderTest extends JsonTest {
     @Test
     void testReaderEmptyWorkRoom() {
         Instant now = Instant.parse("2023-10-17T04:33:00.144500Z");
-        FundMock firstFund = new FundMock("A500", 100, 0.5, 0, now);
+        SecurityMock firstFund = new SecurityMock("A500", 100, 0.5, 0, now);
         Account testAccountExpected = new Account("John Smith", 1000, firstFund);
 
         JsonReader reader = new JsonReaderMock("./data/testReaderConstructedAccount.json");
@@ -41,8 +41,8 @@ class JsonReaderTest extends JsonTest {
     @Test
     void testReaderGeneralWorkRoom() {
         Instant now = Instant.parse("2023-10-17T04:33:00.122226Z");
-        FundMock firstFund = new FundMock("A500", 100, 0.5, 0, now);
-        FundMock secondFund = new FundMock("B500", 50, 0.1, 0.2, now);
+        SecurityMock firstFund = new SecurityMock("A500", 100, 0.5, 0, now);
+        SecurityMock secondFund = new SecurityMock("B500", 50, 0.1, 0.2, now);
         Account testAccountExpected = new Account("John Smith", 1000, firstFund);
         testAccountExpected.addFund(secondFund);
 

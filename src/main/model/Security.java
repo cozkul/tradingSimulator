@@ -14,7 +14,7 @@ import java.util.Random;
  * Represents an ETF available for trading.
  * Maintains a price history and amount of position held by the account.
  */
-public class Fund implements Writable {
+public class Security implements Writable {
     private final Random random = new Random(1);
 
     public static final int UPDATE_INTERVAL = 15;        // History update interval in seconds. At least 2.
@@ -37,7 +37,7 @@ public class Fund implements Writable {
      * EFFECTS: A representation of an ETF is created with the input parameters,
      *          ticker, initial price, yearly return and volatility are set
      */
-    public Fund(String ticker, double initialPrice, double yearlyReturn, double volatility) {
+    public Security(String ticker, double initialPrice, double yearlyReturn, double volatility) {
         this.tickerSymbol = ticker;
         this.yearlyReturn = yearlyReturn;
         this.volatility = volatility;
@@ -53,8 +53,8 @@ public class Fund implements Writable {
      *          ticker, initial price, yearly return, volatility, fundPosition and lastUpdate.
      *          The fund starts maintaining the history provided.
      */
-    public Fund(String ticker, double yearlyReturn, double volatility, List<Double> history,
-                Instant lastUpdate, int fundPosition) {
+    public Security(String ticker, double yearlyReturn, double volatility, List<Double> history,
+                    Instant lastUpdate, int fundPosition) {
         this.tickerSymbol = ticker;
         this.yearlyReturn = yearlyReturn;
         this.volatility = volatility;
@@ -154,7 +154,7 @@ public class Fund implements Writable {
     }
 
     /*
-     * EFFECTS: returns this Fund as a JSON object
+     * EFFECTS: returns this Security as a JSON object
      */
     @Override
     public JSONObject toJson() {

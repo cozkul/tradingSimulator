@@ -1,7 +1,7 @@
 package persistence;
 
 import model.Account;
-import model.Fund;
+import model.Security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +18,7 @@ public class JsonTest {
         }
     }
 
-    protected void assertFundsEqual(Fund expected, Fund received) {
+    protected void assertFundsEqual(Security expected, Security received) {
         assertEquals(expected.getTicker(), received.getTicker());
         assertEquals(expected.getYearlyReturn(), received.getYearlyReturn(), EPSILON);
         assertEquals(expected.getVolatility(), received.getVolatility(), EPSILON);

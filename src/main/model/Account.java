@@ -10,95 +10,98 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Represents an account having owner name, balance (in dollars), and portfolio of funds.
- * Maintains a list of funds, and other account details
+ * Represents an account having owner name, balance (in dollars), and portfolio of securities.
+ * Maintains a list of securities, and other account details
  */
 public class Account implements Writable {
     private final String name;             // the account owner name
     private double balance;                // the current balance of the account
-    private final List<Fund> funds;        // the ETFs allowed to be traded in this account
+    private final List<Security> securities;        // the ETFs allowed to be traded in this account
 
     /*
      * REQUIRES: accountName.length() > 0, fund not null, initialBalance > 0
      * EFFECTS: name of account is set to accountName, initial balance is
-     *          set to initialBalance. A list of funds are initiated and firstFund
+     *          set to initialBalance. A list of securities are initiated and firstSecurity
      *          is added into this list.
      */
-    public Account(String accountName, double initialBalance, Fund firstFund) {
+    public Account(String accountName, double initialBalance, Security firstSecurity) {
         name = accountName;
-        funds = new ArrayList<>();
-        funds.add(firstFund);
+        securities = new ArrayList<>();
+        securities.add(firstSecurity);
         balance = initialBalance;
+        {
+            int i = 5;
+        }
     }
 
     /*
-     * REQUIRES: accountName.length() > 0, funds not null, initialBalance > 0
+     * REQUIRES: accountName.length() > 0, securities not null, initialBalance > 0
      * EFFECTS: name of account is set to accountName, initial balance is
-     *          set to initialBalance. Account starts maintaining the list funds.
+     *          set to initialBalance. Account starts maintaining the list securities.
      */
-    public Account(String accountName, double balance, List<Fund> funds) {
+    public Account(String accountName, double balance, List<Security> securities) {
         this.name = accountName;
-        this.funds = funds;
+        this.securities = securities;
         this.balance = balance;
     }
 
     /*
-     * REQUIRES: fund not null
+     * REQUIRES: security not null
      * MODIFIES: this
-     * EFFECTS: Adds the input fund to the account if the ticker
-     *          is unique for the provided fund.
+     * EFFECTS: Adds the input security to the account if the ticker
+     *          is unique for the provided security.
      */
-    public void addFund(Fund fund) {
-        if (findFund(fund.getTicker()) == null) {
-            funds.add(fund);
+    public void addFund(Security security) {
+        if (findFund(security.getTicker()) == null) {
+            securities.add(security);
         }
     }
 
     /*
-     * REQUIRES: fund not null, order > 0
+     * REQUIRES: security not null, order > 0
      * MODIFIES: this
-     * EFFECTS: if the ask price of the fund multiplied by
+     * EFFECTS: if the ask price of the security multiplied by
      *          order amount is greater than account balance,
      *          then balance is reduced by order times ask price
-     *          of the fund and order is added to the position, otherwise
+     *          of the security and order is added to the position, otherwise
      *          InsufficientBalanceException is thrown.
      */
-    public void buyFundAtAskPrice(int order, Fund fund) throws InsufficientBalanceException {
-        double orderAmount = order * fund.getAskPrice();
+    public void buyFundAtAskPrice(int order, Security security) throws InsufficientBalanceException {
+        double orderAmount = order * security.getAskPrice();
         if (orderAmount > balance) {
             throw new InsufficientBalanceException();
         }
-        fund.setFundPosition(fund.getFundPosition() + order);
+        security.setFundPosition(security.getFundPosition() + order);
         balance -= orderAmount;
     }
 
     /*
-     * REQUIRES: fund not null, order > 0
+     * REQUIRES: security not null, order > 0
      * MODIFIES: this
-     * EFFECTS: if the order amount is greater than funds owned in the
+     * EFFECTS: if the order amount is greater than securities owned in the
      *          account an InsufficientFundException is thrown, otherwise
-     *          balance is increased by order times bid price of the fund
-     *          and order is subtracted from the position of the fund
+     *          balance is increased by order times bid price of the security
+     *          and order is subtracted from the position of the security
      */
-    public void sellFundAtBidPrice(int order, Fund fund) throws InsufficientFundsException {
-        if (order > fund.getFundPosition()) {
+    public void sellFundAtBidPrice(int order, Security security) throws InsufficientFundsException {
+        if (order > security.getFundPosition()) {
             throw new InsufficientFundsException();
         }
-        fund.setFundPosition(fund.getFundPosition() - order);
-        balance += order * fund.getBidPrice();
+        security.setFundPosition(security.getFundPosition() - order);
+        balance += order * security.getBidPrice();
     }
 
     /*
      * REQUIRES: ticker not null
-     * EFFECTS: Searches the list of funds for the given ticker
+     * EFFECTS: Searches the list of securities for the given ticker
      *          returns a reference if it can find the fund, returns
      *          null if it cannot.
      */
-    public Fund findFund(String ticker) {
-        Fund ans = null;
-        for (Fund fund : funds) {
-            if (fund.getTicker().equals(ticker)) {
-                ans = fund;
+    public Security findFund(String ticker) {
+        Security ans = null;
+        for (Security security : securities) {
+            if (security.getTicker().equals(ticker)) {
+                ans = security;
                 break;
             }
         }
@@ -112,12 +115,12 @@ public class Account implements Writable {
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder(String.format("[ name: %s, cash: $%.2f, ", name, balance));
-        for (int i = 0; i < funds.size(); i++) {
-            Fund fund = funds.get(i);
-            ret.append(fund.getTicker());
+        for (int i = 0; i < securities.size(); i++) {
+            Security security = securities.get(i);
+            ret.append(security.getTicker());
             ret.append(" position: ");
-            ret.append(fund.getFundPosition());
-            ret.append((i == funds.size() - 1) ? " ]" : ", ");
+            ret.append(security.getFundPosition());
+            ret.append((i == securities.size() - 1) ? " ]" : ", ");
         }
         return ret.toString();
     }
@@ -130,23 +133,23 @@ public class Account implements Writable {
         JSONObject json = new JSONObject();
         json.put("name", name);
         json.put("balance", balance);
-        json.put("funds", fundsToJson());
+        json.put("securities", fundsToJson());
         return json;
     }
 
     /*
-     * EFFECTS: returns funds in this account as a JSON array
+     * EFFECTS: returns securities in this account as a JSON array
      */
     private JSONArray fundsToJson() {
         JSONArray jsonArray = new JSONArray();
-        for (Fund f : funds) {
+        for (Security f : securities) {
             jsonArray.put(f.toJson());
         }
         return jsonArray;
     }
 
-    public List<Fund> getFunds() {
-        return funds;
+    public List<Security> getFunds() {
+        return securities;
     }
 
     public double getBalance() {

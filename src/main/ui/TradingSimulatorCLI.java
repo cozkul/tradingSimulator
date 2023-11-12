@@ -1,7 +1,7 @@
 package ui;
 
 import model.Account;
-import model.Fund;
+import model.Security;
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
 import persistence.JsonReader;
@@ -17,7 +17,7 @@ import static java.lang.System.exit;
 /*
  * Represents the Simulate App. Maintains an account.
  */
-public class SimulateApp {
+public class TradingSimulatorCLI {
     private static final String JSON_STORE = "./data/user.json";
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
@@ -28,7 +28,7 @@ public class SimulateApp {
    /*
     * EFFECTS: Constructs ETF simulator and runs the application.
     */
-    public SimulateApp() {
+    public TradingSimulatorCLI() {
         scanner = new Scanner(System.in);
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
@@ -138,8 +138,8 @@ public class SimulateApp {
         System.out.print("Please enter annual standard deviation for this ETF (0<=sd<=0.5): ");
         double std = Double.parseDouble(scanner.nextLine());
 
-        Fund fund = new Fund(ticker, price, annualReturn, std);
-        account.addFund(fund);
+        Security security = new Security(ticker, price, annualReturn, std);
+        account.addFund(security);
         System.out.println("Ticker successfully created.");
     }
 
@@ -148,11 +148,11 @@ public class SimulateApp {
      */
     private void printAllFunds() {
         System.out.println("This account is authorized to trade:");
-        List<Fund> funds = account.getFunds();
+        List<Security> securities = account.getFunds();
         StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < funds.size(); i++) {
-            ret.append(funds.get(i).getTicker());
-            ret.append((i == funds.size() - 1) ? "" : ", ");
+        for (int i = 0; i < securities.size(); i++) {
+            ret.append(securities.get(i).getTicker());
+            ret.append((i == securities.size() - 1) ? "" : ", ");
         }
         System.out.println(ret);
     }
@@ -167,13 +167,13 @@ public class SimulateApp {
      *          executed or not.
      */
     private void executeSell() {
-        Fund fund = inputFund();
+        Security security = inputFund();
 
         System.out.print("Please enter order amount: ");
         int order = Integer.parseInt(scanner.nextLine());
 
         try {
-            account.sellFundAtBidPrice(order, fund);
+            account.sellFundAtBidPrice(order, security);
             System.out.print("Order successfully executed. ");
         } catch (InsufficientFundsException e) {
             System.out.print("You do not have enough of this position to sell.");
@@ -192,13 +192,13 @@ public class SimulateApp {
      *          executed or not.
      */
     private void executeBuy() {
-        Fund fund = inputFund();
+        Security security = inputFund();
 
         System.out.print("Please enter order amount: ");
         int order = Integer.parseInt(scanner.nextLine());
 
         try {
-            account.buyFundAtAskPrice(order, fund);
+            account.buyFundAtAskPrice(order, security);
             System.out.print("Order successfully executed.");
         } catch (InsufficientBalanceException e) {
             System.out.print("You do not have enough cash. ");
@@ -212,9 +212,9 @@ public class SimulateApp {
      *          price history for the ticker.
      */
     private void printHistory() {
-        Fund fund = inputFund();
-        System.out.println("Price history for " + fund.getTicker() + ":");
-        System.out.println(fund.getHistory());
+        Security security = inputFund();
+        System.out.println("Price history for " + security.getTicker() + ":");
+        System.out.println(security.getHistory());
         System.out.println("Each item in list represents a day.");
     }
 
@@ -223,10 +223,10 @@ public class SimulateApp {
      *          price current quote for the ticker.
      */
     private void printQuote() {
-        Fund fund = inputFund();
-        System.out.println("Quote for " + fund.getTicker() + ":");
-        String bidPrice = String.format("%.2f", fund.getBidPrice());
-        String askPrice = String.format("%.2f", fund.getAskPrice());
+        Security security = inputFund();
+        System.out.println("Quote for " + security.getTicker() + ":");
+        String bidPrice = String.format("%.2f", security.getBidPrice());
+        String askPrice = String.format("%.2f", security.getAskPrice());
 
         System.out.println("Current bid price: $" + bidPrice
                 + ", ask price: $" + askPrice);
@@ -296,10 +296,10 @@ public class SimulateApp {
             System.out.print("Balance must be greater than $400. Please try again: ");
             initialBalance = Integer.parseInt(scanner.nextLine());
         }
-        Fund fund = new Fund("SP500", 400, 0.07, .20);
-        account = new Account(name, initialBalance, fund);
+        Security security = new Security("SP500", 400, 0.07, .20);
+        account = new Account(name, initialBalance, security);
         System.out.println("Your account has been successfully created.");
-        System.out.printf("You are only authorized to trade %s.\n", fund.getTicker());
+        System.out.printf("You are only authorized to trade %s.\n", security.getTicker());
     }
 
     /*
@@ -310,17 +310,17 @@ public class SimulateApp {
      *          is entered. If the input is invalid valid options are
      *          presented using printAllFunds().
      */
-    private Fund inputFund() {
-        Fund fund = null;
-        while (fund == null) {
+    private Security inputFund() {
+        Security security = null;
+        while (security == null) {
             System.out.print("Please enter the ticker you're interested: ");
             String name = scanner.nextLine();
-            fund = account.findFund(name);
-            if (fund == null) {
+            security = account.findFund(name);
+            if (security == null) {
                 System.out.println("Invalid input.");
                 printAllFunds();
             }
         }
-        return fund;
+        return security;
     }
 }

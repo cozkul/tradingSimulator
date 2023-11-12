@@ -2,15 +2,14 @@ package persistence;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 // Represents a writer that writes JSON representation of workroom to file
 public class JsonWriter {
-    private static final int TAB = 4;
-    private PrintWriter writer;
-    private final String destination;
+    private static final int TAB = 4;  // Number of spaces in a tab
+    private PrintWriter writer;        // PrintWriter from java.io
+    private final String destination;  // destination for *.json file
 
     // EFFECTS: constructs writer to write to destination file
     public JsonWriter(String destination) {

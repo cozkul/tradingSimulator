@@ -1,8 +1,8 @@
 package persistence;
 
 import model.Account;
-import model.Fund;
-import model.mock.FundMock;
+import model.Security;
+import model.mock.SecurityMock;
 import org.junit.jupiter.api.Test;
 import persistence.mock.JsonReaderMock;
 
@@ -31,8 +31,8 @@ class JsonWriterTest extends JsonTest {
     void testWriterConstructedAccount() {
         try {
             Instant now = Instant.now();
-            Fund firstFund = new FundMock("A500", 100, 0.5, 0, now);
-            Account testAccountWrite = new Account("John Smith", 1000, firstFund);
+            Security firstSecurity = new SecurityMock("A500", 100, 0.5, 0, now);
+            Account testAccountWrite = new Account("John Smith", 1000, firstSecurity);
 
             JsonWriter writer = new JsonWriter("./data/testWriterConstructedAccount.json");
             writer.open();
@@ -52,8 +52,8 @@ class JsonWriterTest extends JsonTest {
     void testWriterGeneralWorkroom() {
         try {
             Instant now = Instant.now();
-            FundMock firstFund = new FundMock("A500", 100, 0.5, 0, now);
-            FundMock secondFund = new FundMock("B500", 50, 0.1, 0.2, now);
+            SecurityMock firstFund = new SecurityMock("A500", 100, 0.5, 0, now);
+            SecurityMock secondFund = new SecurityMock("B500", 50, 0.1, 0.2, now);
             Account testAccountWrite = new Account("John Smith", 1000, firstFund);
             testAccountWrite.addFund(secondFund);
 

@@ -1,7 +1,7 @@
 package persistence.mock;
 
-import model.Fund;
-import model.mock.FundMock;
+import model.Security;
+import model.mock.SecurityMock;
 import org.json.JSONObject;
 import persistence.JsonReader;
 
@@ -15,12 +15,12 @@ public class JsonReaderMock extends JsonReader {
     }
 
     @Override
-    protected Fund makeFund(JSONObject jsonObject) {
-        Fund temp = super.makeFund(jsonObject);
+    protected Security makeFund(JSONObject jsonObject) {
+        Security temp = super.makeFund(jsonObject);
         Instant lastUpdate = Instant.parse(jsonObject.getString("lastUpdate"));
         List<Double> history = makeHistory(jsonObject.getJSONArray("history"));
 
-        return new FundMock(temp.getTicker(),
+        return new SecurityMock(temp.getTicker(),
                 temp.getYearlyReturn(),
                 temp.getVolatility(),
                 history,
