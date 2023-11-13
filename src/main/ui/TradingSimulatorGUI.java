@@ -14,6 +14,9 @@ import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class TradingSimulatorGUI {
@@ -35,18 +38,29 @@ public class TradingSimulatorGUI {
     private JTextField quantityField;
     private JButton executeButton;
     private JTable accountTable;
-    private JScrollPane chart;
     private JPanel panelMain;
     private JLabel quoteField;
     private JLabel nameLabel;
     private JLabel cashLabel;
     private JScrollPane accountScrollPane;
+    private JPanel chartPanel;
 
     public TradingSimulatorGUI() {
         // createUIComponents() is called here.
         initializeJson();
         initializeSimulator();
         initializeGUI();
+        scheduleUpdate();
+    }
+
+    private void scheduleUpdate() {
+        Runnable update = new Runnable() {
+            public void run() {
+                updateAll();
+            }
+        };
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(update, 0, 5, TimeUnit.SECONDS);
     }
 
     private void initializeGUI() {
@@ -62,15 +76,7 @@ public class TradingSimulatorGUI {
         sellAtBidPriceRadioButton.addActionListener(this::sellRadioHandler);
         viewSecurityInChartCheckBox.addActionListener(this::viewCheckHandler);
         viewSecurityInChartCheckBox.addActionListener(this::viewCheckHandler);
-        /*frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                Dimension size = accountScrollPane.getSize();
-                accountTable.setPreferredScrollableViewportSize(size);
-            }
-        });*/
-
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 
@@ -151,6 +157,8 @@ public class TradingSimulatorGUI {
 
         accountTable.setPreferredScrollableViewportSize(accountTable.getPreferredSize());
         accountTable.setFillsViewportHeight(true);
+
+        chartPanel = new GraphDrawer(new Dimension(600, 400), new int[] {0, 3, 4, 7, 5, 10, 3});
     }
 
 
@@ -214,6 +222,7 @@ public class TradingSimulatorGUI {
         dialog.setTitle("Please Enter Account Information");
         dialog.setLocationRelativeTo(frame);
         dialog.pack();
+        dialog.setResizable(false);
         dialog.setVisible(true);
     }
 
@@ -224,12 +233,18 @@ public class TradingSimulatorGUI {
         updateAll();
     }
 
+    private boolean firstLoad = true;
+
     private void loadHandler(ActionEvent evt) {
         try {
             state.reset();
             account = jsonReader.read();
             updateAll();
-            JOptionPane.showMessageDialog(frame, "Loaded " + account.getName() + " from " + JSON_STORE);
+            if (firstLoad) {
+                firstLoad = false;
+            } else {
+                JOptionPane.showMessageDialog(frame, "Loaded " + account.getName() + " from " + JSON_STORE);
+            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, "Unable to read from file: " + JSON_STORE);
         }
@@ -245,6 +260,7 @@ public class TradingSimulatorGUI {
         dialog.setTitle("Please Enter Security Information");
         dialog.setLocationRelativeTo(frame);
         dialog.pack();
+        dialog.setResizable(false);
         dialog.setVisible(true);
     }
 
@@ -275,7 +291,7 @@ public class TradingSimulatorGUI {
                 JOptionPane.showMessageDialog(frame, "You do not have enough of this position to sell.");
             }
         }
-        updateAccountTable();
+        updateAll();
     }
 
     private void buyRadioHandler(ActionEvent evt) {
