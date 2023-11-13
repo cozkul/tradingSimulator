@@ -6,7 +6,7 @@
             "ticker": "A500",
             "lastUpdate": "2023-10-17T04:34:16.122226Z",
             "yearlyReturn": 0.5,
-            "fundPosition": 0,
+            "securityPosition": 0,
             "volatility": 0,
             "history": [
                 100,
@@ -21,7 +21,7 @@
             "ticker": "B500",
             "lastUpdate": "2023-10-17T04:34:16.122226Z",
             "yearlyReturn": 0.1,
-            "fundPosition": 0,
+            "securityPosition": 0,
             "volatility": 0.2,
             "history": [
                 50,

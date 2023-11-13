@@ -23,14 +23,14 @@ public class Security implements Writable {
     public static final double ASK_SPREAD = 0.01;         // Difference of ask price and mean in dollars
     public static final double BID_SPREAD = 0.01;         // Difference of mean and bid price in dollars
 
-    private final String tickerSymbol;          // Ticker symbol that represents fund
+    private final String tickerSymbol;          // Ticker symbol that represents security
 
-    protected final double yearlyReturn;        // Average annual percent return of the fund
+    protected final double yearlyReturn;        // Average annual percent return of the security
     private final double volatility;            // Annual standard deviation of the percent return
 
     private final List<Double> history;         // Price history stored in this list
     protected Instant lastHistoryUpdate;        // Time of last history update
-    private int fundPosition;                   // Number uf funds account owns
+    private int securityPosition;               // Number of securities account owns
 
     /*
      * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0
@@ -48,19 +48,19 @@ public class Security implements Writable {
 
     /*
      * REQUIRES: ticker.length() > 0, initialPrice > 0, yearlyReturn > 0, volatility > 0,
-     *           history not null, lastUpdate not null, fundPosition > 0
+     *           history not null, lastUpdate not null, securityPosition > 0
      * EFFECTS: A representation of an ETF is created with the input parameters,
-     *          ticker, initial price, yearly return, volatility, fundPosition and lastUpdate.
+     *          ticker, initial price, yearly return, volatility, securityPosition and lastUpdate.
      *          The fund starts maintaining the history provided.
      */
     public Security(String ticker, double yearlyReturn, double volatility, List<Double> history,
-                    Instant lastUpdate, int fundPosition) {
+                    Instant lastUpdate, int securityPosition) {
         this.tickerSymbol = ticker;
         this.yearlyReturn = yearlyReturn;
         this.volatility = volatility;
         this.history = history;
         this.lastHistoryUpdate = lastUpdate;
-        this.fundPosition = fundPosition;
+        this.securityPosition = securityPosition;
     }
 
 
@@ -164,7 +164,7 @@ public class Security implements Writable {
         json.put("volatility", volatility);
         json.put("history", historyToJson());
         json.put("lastUpdate", lastHistoryUpdate.toString());
-        json.put("fundPosition", fundPosition);
+        json.put("securityPosition", securityPosition);
         return json;
     }
 
@@ -179,12 +179,12 @@ public class Security implements Writable {
         return jsonArray;
     }
 
-    public int getFundPosition() {
-        return fundPosition;
+    public int getSecurityPosition() {
+        return securityPosition;
     }
 
-    public void setFundPosition(int fundPosition) {
-        this.fundPosition = fundPosition;
+    public void setSecurityPosition(int securityPosition) {
+        this.securityPosition = securityPosition;
     }
 
     public String getTicker() {
@@ -192,7 +192,7 @@ public class Security implements Writable {
     }
 
     public int getPosition() {
-        return fundPosition;
+        return securityPosition;
     }
 
     public double getYearlyReturn() {

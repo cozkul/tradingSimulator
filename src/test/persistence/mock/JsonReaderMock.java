@@ -25,7 +25,7 @@ public class JsonReaderMock extends JsonReader {
                 temp.getVolatility(),
                 history,
                 lastUpdate,
-                temp.getFundPosition()
+                temp.getSecurityPosition()
         );
     }
 }

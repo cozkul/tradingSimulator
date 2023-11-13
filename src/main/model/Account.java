@@ -29,9 +29,6 @@ public class Account implements Writable {
         securities = new ArrayList<>();
         securities.add(firstSecurity);
         balance = initialBalance;
-        {
-            int i = 5;
-        }
     }
 
     /*
@@ -71,7 +68,7 @@ public class Account implements Writable {
         if (orderAmount > balance) {
             throw new InsufficientBalanceException();
         }
-        security.setFundPosition(security.getFundPosition() + order);
+        security.setSecurityPosition(security.getSecurityPosition() + order);
         balance -= orderAmount;
     }
 
@@ -84,10 +81,10 @@ public class Account implements Writable {
      *          and order is subtracted from the position of the security
      */
     public void sellFundAtBidPrice(int order, Security security) throws InsufficientFundsException {
-        if (order > security.getFundPosition()) {
+        if (order > security.getSecurityPosition()) {
             throw new InsufficientFundsException();
         }
-        security.setFundPosition(security.getFundPosition() - order);
+        security.setSecurityPosition(security.getSecurityPosition() - order);
         balance += order * security.getBidPrice();
     }
 
@@ -119,7 +116,7 @@ public class Account implements Writable {
             Security security = securities.get(i);
             ret.append(security.getTicker());
             ret.append(" position: ");
-            ret.append(security.getFundPosition());
+            ret.append(security.getSecurityPosition());
             ret.append((i == securities.size() - 1) ? " ]" : ", ");
         }
         return ret.toString();
@@ -148,7 +145,7 @@ public class Account implements Writable {
         return jsonArray;
     }
 
-    public List<Security> getFunds() {
+    public List<Security> getSecurities() {
         return securities;
     }
 

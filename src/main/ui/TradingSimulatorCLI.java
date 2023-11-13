@@ -73,7 +73,7 @@ public class TradingSimulatorCLI {
                 executeSell();
                 break;
             case "add":
-                executeAddFund();
+                executeAddSecurity();
                 break;
             case "list":
                 printAllFunds();
@@ -123,9 +123,9 @@ public class TradingSimulatorCLI {
      *           for ticker, double when prompted for numbers.
      * MODIFIES: account
      * EFFECTS: Presents inputs for ETF creation. Creates an ETF and calls
-     *          account.addFund(...) with the inputs from the user.
+     *          account.addSecurity(...) with the inputs from the user.
      */
-    private void executeAddFund() {
+    private void executeAddSecurity() {
         System.out.print("Please enter ticker for ETF: ");
         String ticker = scanner.nextLine();
 
@@ -148,7 +148,7 @@ public class TradingSimulatorCLI {
      */
     private void printAllFunds() {
         System.out.println("This account is authorized to trade:");
-        List<Security> securities = account.getFunds();
+        List<Security> securities = account.getSecurities();
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < securities.size(); i++) {
             ret.append(securities.get(i).getTicker());
@@ -201,7 +201,7 @@ public class TradingSimulatorCLI {
             account.buyFundAtAskPrice(order, security);
             System.out.print("Order successfully executed.");
         } catch (InsufficientBalanceException e) {
-            System.out.print("You do not have enough cash. ");
+            System.out.print("You do not have enough cash.");
         }
 
         printAccountSummary();

@@ -20,11 +20,10 @@ public class SecurityMock extends Security {
     }
 
     public SecurityMock(String ticker, double yearlyReturn, double volatility, List<Double> history,
-                        Instant now, int fundPosition) {
-        super(ticker, yearlyReturn, volatility, history, now, fundPosition);
+                        Instant now, int securityPosition) {
+        super(ticker, yearlyReturn, volatility, history, now, securityPosition);
         this.now = now;
         this.lastTime = now.plus(1, ChronoUnit.SECONDS);
-
     }
 
     @Override

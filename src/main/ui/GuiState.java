@@ -2,16 +2,24 @@ package ui;
 
 import model.Security;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.HashSet;
 import java.util.Set;
 
 public class GuiState {
     private int buySellState;
     private final Set<Security> viewableSecurities;
+    DefaultListModel<Security> listSecurities;
+    DefaultTableModel tableModel;
 
     public GuiState() {
         buySellState = 0;
         viewableSecurities = new HashSet<>();
+        listSecurities = new DefaultListModel<>();
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Security");
+        tableModel.addColumn("Position");
     }
 
     public int getBuySellState() {
@@ -22,15 +30,29 @@ public class GuiState {
         this.buySellState = buySellState;
     }
 
-    public boolean getViewFund(Security security) {
+    public boolean getViewSecurity(Security security) {
         return viewableSecurities.contains(security);
     }
 
-    public void setViewFund(Security security) {
-        if (viewableSecurities.contains(security)) {
-            viewableSecurities.remove(security);
-        } else {
+    public void setViewSecurity(Security security, boolean view) {
+        if (view) {
             viewableSecurities.add(security);
+        } else {
+            viewableSecurities.remove(security);
         }
+    }
+
+    public DefaultListModel<Security> getListSecurities() {
+        return listSecurities;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void reset() {
+        buySellState = 0;
+        viewableSecurities.clear();
+        listSecurities.clear();
     }
 }

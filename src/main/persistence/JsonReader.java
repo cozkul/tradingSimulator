@@ -15,7 +15,7 @@ import org.json.*;
 
 // Represents a reader that reads workroom from JSON data stored in file
 public class JsonReader {
-    private final String source; // Destination for
+    private final String source; // Destination for *.json file
 
     // EFFECTS: constructs reader to read from source file
     public JsonReader(String source) {
@@ -67,14 +67,14 @@ public class JsonReader {
         double volatility = jsonObject.getDouble("volatility");
         List<Double> history = makeHistory(jsonObject.getJSONArray("history"));
         Instant lastUpdate = Instant.parse(jsonObject.getString("lastUpdate"));
-        int fundPosition = jsonObject.getInt("fundPosition");
+        int securityPosition = jsonObject.getInt("securityPosition");
 
         return new Security(ticker,
                 yearlyReturn,
                 volatility,
                 history,
                 lastUpdate,
-                fundPosition
+                securityPosition
         );
     }
 

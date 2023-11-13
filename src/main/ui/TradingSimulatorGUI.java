@@ -1,17 +1,23 @@
 package ui;
 
 import model.Account;
+import model.Security;
+import model.exception.InsufficientBalanceException;
+import model.exception.InsufficientFundsException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 
 public class TradingSimulatorGUI {
-    private final GuiState state;
+    private GuiState state;
     private Account account;
 
     private static final String JSON_STORE = "./data/user.json";
@@ -22,8 +28,8 @@ public class TradingSimulatorGUI {
     private static final int HEIGHT = 600; // Represents frame height
     JFrame frame;
 
-    private JList market;
-    private JCheckBox viewStockInChartCheckBox;
+    private JList<Security> market;
+    private JCheckBox viewSecurityInChartCheckBox;
     private JRadioButton buyAtAskPriceRadioButton;
     private JRadioButton sellAtBidPriceRadioButton;
     private JTextField quantityField;
@@ -31,12 +37,16 @@ public class TradingSimulatorGUI {
     private JTable accountTable;
     private JScrollPane chart;
     private JPanel panelMain;
+    private JLabel quoteField;
+    private JLabel nameLabel;
+    private JLabel cashLabel;
+    private JScrollPane accountScrollPane;
 
     public TradingSimulatorGUI() {
-        state = new GuiState();
+        // createUIComponents() is called here.
         initializeJson();
-        initializeGUI();
         initializeSimulator();
+        initializeGUI();
     }
 
     private void initializeGUI() {
@@ -50,6 +60,17 @@ public class TradingSimulatorGUI {
         executeButton.addActionListener(this::executeTradeHandler);
         buyAtAskPriceRadioButton.addActionListener(this::buyRadioHandler);
         sellAtBidPriceRadioButton.addActionListener(this::sellRadioHandler);
+        viewSecurityInChartCheckBox.addActionListener(this::viewCheckHandler);
+        viewSecurityInChartCheckBox.addActionListener(this::viewCheckHandler);
+        /*frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Dimension size = accountScrollPane.getSize();
+                accountTable.setPreferredScrollableViewportSize(size);
+            }
+        });*/
+
         frame.setVisible(true);
     }
 
@@ -114,6 +135,25 @@ public class TradingSimulatorGUI {
         theMenu.add(menuItem);
     }
 
+    private void createUIComponents() {
+        state = new GuiState();
+        market = new JList<>(state.getListSecurities());
+        market.setCellRenderer(new MarketListCellRenderer());
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                marketClickHandler(e);
+            }
+        };
+        market.addMouseListener(mouseListener);
+        accountScrollPane = new JScrollPane();
+        accountTable = new JTable(state.getTableModel());
+        accountTable.setPreferredScrollableViewportSize(accountScrollPane.getSize());
+
+        accountTable.setPreferredScrollableViewportSize(accountTable.getPreferredSize());
+        accountTable.setFillsViewportHeight(true);
+    }
+
+
     private class NewAccountAction extends AbstractAction {
         NewAccountAction() {
             super("New Account");
@@ -149,7 +189,7 @@ public class TradingSimulatorGUI {
 
     private class CreateSecurity extends AbstractAction {
         CreateSecurity() {
-            super("Create new Security");
+            super("Create New Security");
         }
 
         @Override
@@ -159,29 +199,83 @@ public class TradingSimulatorGUI {
     }
 
     private void saveHandler(ActionEvent evt) {
-        return;
+        try {
+            jsonWriter.open();
+            jsonWriter.write(account);
+            jsonWriter.close();
+            JOptionPane.showMessageDialog(frame, "Saved " + account.getName() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(frame, "Unable to write to file: " + JSON_STORE);
+        }
     }
 
     private void newAccountHandler(ActionEvent evt) {
-        return;
+        NewAccountDialog dialog = new NewAccountDialog(this);
+        dialog.setTitle("Please Enter Account Information");
+        dialog.setLocationRelativeTo(frame);
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+
+    public void makeNewAccount(String name, double initialAmount) {
+        state.reset();
+        Security security = new Security("SP500", 400, 0.07, .20);
+        account = new Account(name, initialAmount, security);
+        updateAll();
     }
 
     private void loadHandler(ActionEvent evt) {
         try {
+            state.reset();
             account = jsonReader.read();
+            updateAll();
+            JOptionPane.showMessageDialog(frame, "Loaded " + account.getName() + " from " + JSON_STORE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, "Unable to read from file: " + JSON_STORE);
-            // STUB
         }
     }
 
+    private void viewCheckHandler(ActionEvent evt) {
+        Security selected = market.getSelectedValue();
+        state.setViewSecurity(selected, viewSecurityInChartCheckBox.isSelected());
+    }
+
     private void createSecurityHandler(ActionEvent evt) {
-        return;
+        NewSecurityDialog dialog = new NewSecurityDialog(this);
+        dialog.setTitle("Please Enter Security Information");
+        dialog.setLocationRelativeTo(frame);
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+
+    public void createSecurity(String ticker, double price, double annualReturn, double std) {
+        Security security = new Security(ticker, price, annualReturn, std);
+        account.addFund(security);
+        updateMarket();
+        updateAccountTable();
     }
 
     private void executeTradeHandler(ActionEvent evt) {
-        quantityField.setText("mooo");
-        JOptionPane.showMessageDialog(frame, "mello?");
+        if (state.getBuySellState() == 0) { // time to buy
+            try {
+                account.buyFundAtAskPrice(
+                        Integer.parseInt(quantityField.getText()),
+                        market.getSelectedValue());
+                JOptionPane.showMessageDialog(frame, "Order successfully executed.");
+            } catch (InsufficientBalanceException e) {
+                JOptionPane.showMessageDialog(frame, "You do not have enough cash.");
+            }
+        } else if (state.getBuySellState() == 1) { // time to sell
+            try {
+                account.sellFundAtBidPrice(
+                        Integer.parseInt(quantityField.getText()),
+                        market.getSelectedValue());
+                JOptionPane.showMessageDialog(frame, "Order successfully executed.");
+            } catch (InsufficientFundsException e) {
+                JOptionPane.showMessageDialog(frame, "You do not have enough of this position to sell.");
+            }
+        }
+        updateAccountTable();
     }
 
     private void buyRadioHandler(ActionEvent evt) {
@@ -194,12 +288,67 @@ public class TradingSimulatorGUI {
         updateRadio();
     }
 
+    private void marketClickHandler(MouseEvent evt) {
+        updateCheckBox();
+        updateQuote();
+    }
+
+    private void updateMarket() {
+        DefaultListModel<Security> listSecurities = state.getListSecurities();
+        Security selected = market.getSelectedValue();
+        listSecurities.clear();
+        state.getListSecurities().addAll(account.getSecurities());
+        if (selected != null) {
+            market.setSelectedValue(selected, true);
+        } else {
+            market.setSelectedIndex(0);
+        }
+    }
+
     private void updateRadio() {
         buyAtAskPriceRadioButton.setSelected(state.getBuySellState() == 0);
         sellAtBidPriceRadioButton.setSelected(state.getBuySellState() == 1);
     }
 
     private void updateCheckBox() {
+        Security selected = market.getSelectedValue();
+        viewSecurityInChartCheckBox.setSelected(state.getViewSecurity(selected));
+    }
 
+    private void updateQuote() {
+        Security selected = market.getSelectedValue();
+        String bidPrice = String.format("%.2f", selected.getBidPrice());
+        String askPrice = String.format("%.2f", selected.getAskPrice());
+        String quote = "Current bid price: $" + bidPrice + " , ask price: $" + askPrice;
+        quoteField.setText(quote);
+    }
+
+    private void updateAccountTable() {
+        DefaultTableModel tableModel = state.getTableModel();
+        List<Security> securities = account.getSecurities();
+        tableModel.getDataVector().removeAllElements();
+        for (Security s : securities) {
+            tableModel.addRow(new Object[]{s.getTicker(), s.getSecurityPosition()});
+        }
+    }
+
+    private void updateAccountNameCash() {
+        String balance = String.format("%.2f", account.getBalance());
+        nameLabel.setText("Account Holder: " + account.getName());
+        cashLabel.setText("Buying Power: $" + balance);
+    }
+
+    private void updateChart() {
+
+    }
+
+    private void updateAll() {
+        updateCheckBox();
+        updateRadio();
+        updateMarket();
+        updateQuote();
+        updateAccountNameCash();
+        updateAccountTable();
+        updateChart();
     }
 }

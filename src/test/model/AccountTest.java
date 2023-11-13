@@ -28,7 +28,7 @@ public class AccountTest {
 
     @Test
     void testAddFundOnce() {
-        List<Security> securities = testAccount.getFunds();
+        List<Security> securities = testAccount.getSecurities();
         assertEquals(1, securities.size());
         assertEquals(firstSecurity, securities.get(0));
         Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
@@ -40,7 +40,7 @@ public class AccountTest {
 
     @Test
     void testAddFundMultiple() {
-        List<Security> securities = testAccount.getFunds();
+        List<Security> securities = testAccount.getSecurities();
         Security securityB = new SecurityMock("B500", 200, 0.5, 0, now);
         Security securityC = new SecurityMock("C500", 200, 0.5, 0, now);
         // FundD with duplicate ticker should not be added.
