@@ -50,6 +50,10 @@ public class GuiState {
         return tableModel;
     }
 
+    public Set<Security> getViewableSecurities() {
+        return viewableSecurities;
+    }
+
     public void reset() {
         buySellState = 0;
         viewableSecurities.clear();

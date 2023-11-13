@@ -1,10 +1,17 @@
 package ui;
 
+import model.Security;
+
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.util.List;
 
 class GraphDrawer extends JPanel {
-    private int[] coordsY;
+    private GuiState guiState;
+
     private final int initialX;
     private final int initialY;
     private final int finalX;
@@ -12,8 +19,8 @@ class GraphDrawer extends JPanel {
     private final int unitX;
     private final int unitY;
 
-    public GraphDrawer(Dimension size, int[] coordsY) {
-        this.coordsY = coordsY;
+    public GraphDrawer(Dimension size, GuiState guiState) {
+        this.guiState = guiState;
         finalX = 10;
         initialY = 20;
         initialX = (int) (size.getWidth() - 50);
@@ -29,12 +36,20 @@ class GraphDrawer extends JPanel {
 
         drawGridAxis(g2d);
 
-        int prevX = initialX;
-        int prevY = finalY;
-        //We draw each of our coords in red color
-        g2d.setColor(Color.RED);
-        for (int y : coordsY) {
-            g2d.drawLine(prevX, prevY, prevX += unitX, prevY = finalY - (y * unitY));
+        Color[] colors = generateColors(guiState.getViewableSecurities().size());
+        double maxPrice = getMaxPrice();
+        int i = 0;
+        for (Security security : guiState.getViewableSecurities()) {
+            g2d.setColor(colors[i]);
+            List<Double> history = security.getHistory();
+            int prevX = initialX;
+            int prevY = (int) (finalY - (history.get(history.size() - 1) / maxPrice * 10 * unitY));
+            int lowerBound = Math.max(history.size() - 11, 0);
+            for (int j = history.size() - 1; --j >= lowerBound;) {
+                double y = history.get(j) / maxPrice * 10;
+                g2d.drawLine(prevX, prevY, prevX += unitX, prevY = (int) (finalY - (y * unitY)));
+            }
+            ++i;
         }
     }
 
@@ -51,5 +66,23 @@ class GraphDrawer extends JPanel {
         g2d.setColor(Color.BLACK);
         g2d.drawLine(initialX, initialY, initialX, finalY);
         g2d.drawLine(initialX, finalY, finalX, finalY);
+    }
+
+    private Color[] generateColors(int n) {
+        Color[] cols = new Color[n];
+        for (int i = 0; i < n; ++i) {
+            cols[i] = Color.getHSBColor((float) i / (float) n, 0.85f, 1.0f);
+        }
+        return cols;
+    }
+
+    private double getMaxPrice() {
+        double ans = 0.0;
+        for (Security security : guiState.getViewableSecurities()) {
+            for (Double price : security.getHistory()) {
+                ans = (price > ans) ? price : ans;
+            }
+        }
+        return ans;
     }
 }

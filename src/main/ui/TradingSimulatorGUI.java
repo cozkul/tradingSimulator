@@ -50,7 +50,7 @@ public class TradingSimulatorGUI {
         initializeJson();
         initializeSimulator();
         initializeGUI();
-        scheduleUpdate();
+        scheduleUpdate(); // disable while debugging
     }
 
     private void scheduleUpdate() {
@@ -158,7 +158,7 @@ public class TradingSimulatorGUI {
         accountTable.setPreferredScrollableViewportSize(accountTable.getPreferredSize());
         accountTable.setFillsViewportHeight(true);
 
-        chartPanel = new GraphDrawer(new Dimension(600, 400), new int[] {0, 3, 4, 7, 5, 10, 3});
+        chartPanel = new GraphDrawer(new Dimension(600, 400), state);
     }
 
 
@@ -253,6 +253,7 @@ public class TradingSimulatorGUI {
     private void viewCheckHandler(ActionEvent evt) {
         Security selected = market.getSelectedValue();
         state.setViewSecurity(selected, viewSecurityInChartCheckBox.isSelected());
+        updateChart();
     }
 
     private void createSecurityHandler(ActionEvent evt) {
@@ -355,7 +356,7 @@ public class TradingSimulatorGUI {
     }
 
     private void updateChart() {
-
+        chartPanel.repaint();
     }
 
     private void updateAll() {
