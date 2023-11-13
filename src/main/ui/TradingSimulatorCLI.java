@@ -18,12 +18,12 @@ import static java.lang.System.exit;
  * Represents the Simulate App. Maintains an account.
  */
 public class TradingSimulatorCLI {
-    private static final String JSON_STORE = "./data/user.json";
-    private final JsonWriter jsonWriter;
-    private final JsonReader jsonReader;
+    private static final String JSON_STORE = "./data/user.json"; // Directory of user save file
+    private final JsonWriter jsonWriter;                         // jsonWriter object used for saving
+    private final JsonReader jsonReader;                         // jsonWriter object used for loading
 
-    private final Scanner scanner;
-    private Account account;
+    private final Scanner scanner; // Scanner used for user input from terminal
+    private Account account;       // Stores all account related information.
 
    /*
     * EFFECTS: Constructs ETF simulator and runs the application.

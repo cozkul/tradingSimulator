@@ -14,9 +14,9 @@ import java.util.List;
  * Maintains a list of securities, and other account details
  */
 public class Account implements Writable {
-    private final String name;             // the account owner name
-    private double balance;                // the current balance of the account
-    private final List<Security> securities;        // the ETFs allowed to be traded in this account
+    private final String name;               // the account owner name
+    private double balance;                  // the current balance of the account
+    private final List<Security> securities; // the ETFs allowed to be traded in this account
 
     /*
      * REQUIRES: accountName.length() > 0, fund not null, initialBalance > 0
