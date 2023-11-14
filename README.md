@@ -35,7 +35,7 @@ I started this project because I want to demonstrate that if stock prices are a 
 - *As a user*, I want to be able to **load the simulation**, *so that* I continue with simulation if I choose so.
 
 ## Instructions for Grader
-- You can generate the first required action related to adding Security to an Account by using menu "Simulation > Create New Security" or Ctrl + X. Input in the dialog box must be valid doubles.
+- You can generate the first required action related to adding Security to an Account by using menu "Simulation > Create New Security" or Ctrl + X. Input in the dialog box must be valid string for ticker, and doubles for rest.
 - You can generate the second required action related to buying Security with Account by using Order JPanel. Select desired security in market JList, select desired radiobutton action, enter a valid integer to Quantity field and click Execute button.
 - You can locate my visual component by looking at the chart JPanel. You must select desired security in market JList and click view security in chart checkbox.
 - You can save the state of my application by using menu "File > Save File" or Ctrl + S.
