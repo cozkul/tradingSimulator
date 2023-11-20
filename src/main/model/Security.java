@@ -15,7 +15,7 @@ import java.util.Random;
  * Maintains a price history and amount of position held by the account.
  */
 public class Security implements Writable {
-    private final Random random = new Random(1);
+    private final Random random = new Random();
 
     public static final int UPDATE_INTERVAL = 15;        // History update interval in seconds. At least 2.
     public static final int DAYS_PER_INTERVAL = 1;       // History days past per interval
