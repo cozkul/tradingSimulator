@@ -60,23 +60,7 @@ class GraphDrawer extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         updateMaxPrice();
         drawGridAxis(g2d);
-
-        for (Security security : guiState.getViewableSecurities()) {
-            g2d.setColor(generateColor(security.hashCode()));
-            List<Double> history = security.getHistory();
-            float prevX = initialX;
-            float prevY = scaleY(history.get(history.size() - 1));
-            int realWidth = (X_GRID / X_GRID_LINE) * X_GRID_LINE;
-            int lowerBound = Math.max(history.size() - realWidth, 0);
-            for (int i = history.size() - 1; --i >= lowerBound;) {
-                g2d.drawLine(
-                        (int) prevX,
-                        (int) prevY,
-                        (int) (prevX += unitX),
-                        (int) (prevY = scaleY(history.get(i)))
-                );
-            }
-        }
+        drawPlot(g2d);
     }
 
     /*
@@ -97,6 +81,34 @@ class GraphDrawer extends JPanel {
         g2d.setColor(Color.BLACK);
         g2d.drawLine(initialX, initialY, initialX, finalY);
         g2d.drawLine(initialX, finalY, finalX, finalY);
+    }
+
+    /*
+     * REQUIRES: Graphics2D g2d not null
+     * MODIFIES: Graphics2D g2d
+     * EFFECTS: Draws each viewable security in guiState. Colors are unique to each security.
+     */
+    private void drawPlot(Graphics2D g2d) {
+        for (Security security : guiState.getViewableSecurities()) {
+            g2d.setColor(generateColor(security.hashCode()));
+            List<Double> history = security.getHistory();
+            float prevX = initialX;
+            float prevY = scaleY(history.get(history.size() - 1));
+            int realWidth = (X_GRID / X_GRID_LINE) * X_GRID_LINE;
+            int lowerBound = Math.max(history.size() - realWidth, 0);
+            for (int i = history.size() - 1; --i >= lowerBound;) {
+                float nextX = prevX + unitX;
+                float nextY = scaleY(history.get(i));
+                g2d.drawLine(
+                        (int) prevX,
+                        (int) prevY,
+                        (int) nextX,
+                        (int) nextY
+                );
+                prevX = nextX;
+                prevY = nextY;
+            }
+        }
     }
 
     /*
