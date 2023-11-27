@@ -1,6 +1,8 @@
 package ui;
 
 import model.Account;
+import model.Event;
+import model.EventLog;
 import model.Security;
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
@@ -45,7 +47,7 @@ public class TradingSimulatorGUI {
     private JLabel nameLabel;                      // JLabel for displaying account holder name
     private JLabel cashLabel;                      // JLabel for displaying cash in account
     private JScrollPane accountScrollPane;         // JScrollPane for accountTable
-    private JPanel chartPanel;                     // JPanel for displaying the chart
+    private GraphDrawer chartPanel;                     // JPanel for displaying the chart
 
     /*
      * EFFECTS: Initializes all fields of the instance:
@@ -85,11 +87,12 @@ public class TradingSimulatorGUI {
      *          frame visible.
      */
     private void initializeGUI() {
-        frame = new JFrame();
+        frame = new MainFrame();
         frame.setTitle("Trading Simulator");
         frame.setSize(WIDTH, HEIGHT);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setContentPane(panelMain);
+        frame.addWindowListener((MainFrame)frame);
         centreOnScreen(frame);
         addMenu();
         executeButton.addActionListener(this::executeTradeHandler);
@@ -98,6 +101,51 @@ public class TradingSimulatorGUI {
         viewSecurityInChartCheckBox.addActionListener(this::viewCheckHandler);
         frame.setResizable(false);
         frame.setVisible(true);
+    }
+
+    private static class MainFrame extends JFrame implements WindowListener {
+
+        public MainFrame() {
+            super();
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            EventLog eventLog = EventLog.getInstance();
+            for (Event event : eventLog) {
+                System.out.println(event);
+            }
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
     }
 
     /*

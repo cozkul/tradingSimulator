@@ -41,3 +41,28 @@ I started this project because I want to demonstrate that if stock prices are a 
 - You can save the state of this application by using menu "File > Save File" or Ctrl + S.
 - You can reload the state of this application by using menu "File > Load File" or Ctrl + O.
 - You can create new account by using menu "File > New Account" or Ctrl + N. Input must be valid String and double.
+
+## Phase 4: Task 2
+Representative sample of the events that occur when your program runs:
+
+Sun Nov 26 16:42:13 PST 2023\
+Account@367746789: Account loaded: [ name: Mark, cash: $1989.29, SP500 position: 5, BRK position: 5, QQQ position: 10 ]\
+Sun Nov 26 16:42:20 PST 2023\
+Account@367746789: Sold security: SP500 QTY4 at $6010.78\
+Sun Nov 26 16:43:10 PST 2023\
+Account@367746789: Sold security: BRK QTY5 at $21553.82\
+Sun Nov 26 16:43:47 PST 2023\
+Account@367746789: Sold security: QQQ QTY9 at $5908.41\
+Sun Nov 26 16:43:59 PST 2023\
+Account@367746789: Failed to buy: QQQ QTY200 at $5905.97\
+Sun Nov 26 16:44:03 PST 2023\
+Account@367746789: Bought security: QQQ QTY20 at $5905.97
+
+## Phase 4: Task 3
+- Currently, to generate price history we check the elapsed time on each price request and generate history depending on how much time passed. This is OK for the CLI, but it is not great for the GUI since we could request a price through a user action and there is a request for update each 5 seconds. Technically both user and the 5-second update could request an update at the same time, and we could generate the same history twice. This would need to be mitigated with a lock or we can use Observer pattern to update price in GUI.
+- Price generation is better done through a manager class rather than user requests. A SecurityManager class would be a better option to store the list of securities, as this would allow each security to be updated at the same time rather than each security watching time passed on their own.
+- A SecurityManager class would also allow using same securities for multiple accounts.
+- Poor decoupling for Account and Security classes. Currently, the quantity of each security is a field in security but this data is more associated with the account. I took shortcuts because I knew the requirements but this would not be a good long term solution if we wanted to add multiple accounts in the future.
+- JsonWriter and JsonReader could be singletons because we do not need more than 1 instance of these classes.
+- MarketListCellRenderer can be removed completely if we implement .toString() method in model::Security. I was lazy on phase 3 and didn't want to create new tests.
+- Existence of GuiState is basically antithesis of decoupling. I just wanted to organize these fields in TradingSimulatorGUI class, but I should not have created an instantiable GuiState class for this. Instead, maybe a private nested struct could have been better.

@@ -29,6 +29,8 @@ public class Account implements Writable {
         securities = new ArrayList<>();
         securities.add(firstSecurity);
         balance = initialBalance;
+
+        logEvent("Account created: " + this);
     }
 
     /*
@@ -40,6 +42,8 @@ public class Account implements Writable {
         this.name = accountName;
         this.securities = securities;
         this.balance = balance;
+
+        logEvent("Account loaded: " + this);
     }
 
     /*
@@ -49,9 +53,12 @@ public class Account implements Writable {
      *          is unique for the provided security.
      */
     public void addFund(Security security) {
-        if (findFund(security.getTicker()) == null) {
-            securities.add(security);
+        if (findFund(security.getTicker()) != null) {
+            return;
         }
+        securities.add(security);
+        logEvent(String.format("Added new security: %s with expected return $%.2f and volatility $%.2f",
+                security.getTicker(), security.getYearlyReturn(), security.getVolatility()));
     }
 
     /*
@@ -64,12 +71,15 @@ public class Account implements Writable {
      *          InsufficientBalanceException is thrown.
      */
     public void buyFundAtAskPrice(int order, Security security) throws InsufficientBalanceException {
-        double orderAmount = order * security.getAskPrice();
+        double askPrice = security.getAskPrice();
+        double orderAmount = order * askPrice;
         if (orderAmount > balance) {
+            logEvent(String.format("Failed to buy: %s QTY%d at $%.2f", security.getTicker(), order, askPrice));
             throw new InsufficientBalanceException();
         }
         security.setSecurityPosition(security.getSecurityPosition() + order);
         balance -= orderAmount;
+        logEvent(String.format("Bought security: %s QTY%d at $%.2f", security.getTicker(), order, askPrice));
     }
 
     /*
@@ -81,11 +91,14 @@ public class Account implements Writable {
      *          and order is subtracted from the position of the security
      */
     public void sellFundAtBidPrice(int order, Security security) throws InsufficientFundsException {
+        double bidPrice = security.getBidPrice();
         if (order > security.getSecurityPosition()) {
+            logEvent(String.format("Failed to sell: %s QTY%d at $%.2f", security.getTicker(), order, bidPrice));
             throw new InsufficientFundsException();
         }
         security.setSecurityPosition(security.getSecurityPosition() - order);
-        balance += order * security.getBidPrice();
+        balance += order * bidPrice;
+        logEvent(String.format("Sold security: %s QTY%d at $%.2f", security.getTicker(), order, bidPrice));
     }
 
     /*
@@ -155,5 +168,11 @@ public class Account implements Writable {
 
     public String getName() {
         return name;
+    }
+
+    private void logEvent(String event) {
+        EventLog eventLog = EventLog.getInstance();
+        Event e = new Event("Account@" + this.hashCode() + ": " + event);
+        eventLog.logEvent(e);
     }
 }

@@ -1,6 +1,8 @@
 package ui;
 
 import model.Account;
+import model.Event;
+import model.EventLog;
 import model.Security;
 import model.exception.InsufficientBalanceException;
 import model.exception.InsufficientFundsException;
@@ -88,10 +90,19 @@ public class TradingSimulatorCLI {
                 createAccount();
                 break;
             case "exit":
+                printLogs();
                 exit(0);
             default:
                 System.out.println("Invalid input. Please try again.");
                 break;
+        }
+    }
+
+    // EFFECTS: displays all logs
+    private void printLogs() {
+        EventLog eventLog = EventLog.getInstance();
+        for (Event e : eventLog) {
+            System.out.println(e);
         }
     }
 
