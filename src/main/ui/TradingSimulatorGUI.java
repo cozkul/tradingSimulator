@@ -47,7 +47,7 @@ public class TradingSimulatorGUI {
     private JLabel nameLabel;                      // JLabel for displaying account holder name
     private JLabel cashLabel;                      // JLabel for displaying cash in account
     private JScrollPane accountScrollPane;         // JScrollPane for accountTable
-    private GraphDrawer chartPanel;                     // JPanel for displaying the chart
+    private JPanel chartPanel;                     // JPanel for displaying the chart
 
     /*
      * EFFECTS: Initializes all fields of the instance:
@@ -199,7 +199,7 @@ public class TradingSimulatorGUI {
 
         JMenu simulationMenu = new JMenu("Simulation");
         simulationMenu.setMnemonic('S');
-        addMenuItem(simulationMenu, new CreateSecurity(),
+        addMenuItem(simulationMenu, new CreateSecurityAction(),
                 KeyStroke.getKeyStroke("control X"));
         menuBar.add(simulationMenu);
 
@@ -306,11 +306,11 @@ public class TradingSimulatorGUI {
     /*
      * Represents a new security action called by the menu in frame.
      */
-    private class CreateSecurity extends AbstractAction {
+    private class CreateSecurityAction extends AbstractAction {
         /*
          * EFFECTS: Initialize Abstract Action with name "Create New Security".
          */
-        CreateSecurity() {
+        CreateSecurityAction() {
             super("Create New Security");
         }
 
