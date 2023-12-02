@@ -57,7 +57,7 @@ public class Account implements Writable {
             return;
         }
         securities.add(security);
-        logEvent(String.format("Added new security: %s with expected return $%.2f and volatility $%.2f",
+        logEvent(String.format("Added new security: %s with expected return %.2f and volatility %.2f",
                 security.getTicker(), security.getYearlyReturn(), security.getVolatility()));
     }
 
