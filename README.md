@@ -1,5 +1,7 @@
 # Trading Simulator
 
+![Application Screenshot](screenshots/screenshot.png)
+
 ## Introduction
 
 The ETF Timing Simulator is a robust Java desktop application designed to empower users in simulating timing their financial investments with ease. In an ever-evolving financial landscape, having a tool that provides education and an opportunity to try timing the market without real life consequences is invaluable.

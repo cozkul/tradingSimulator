@@ -1,0 +1,12 @@
+{
+    "balance": 1000,
+    "name": "John Smith",
+    "securities": [{
+        "ticker": "A500",
+        "lastUpdate": "2023-11-27T00:42:09.572382Z",
+        "yearlyReturn": 0.5,
+        "volatility": 0,
+        "history": [100],
+        "securityPosition": 0
+    }]
+}
