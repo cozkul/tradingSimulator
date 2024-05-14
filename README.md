@@ -1,6 +1,6 @@
 # Trading Simulator
 
-![Application Screenshot](screenshots/screenshot.png)
+![Application Screenshot](screenshots/screenshot_update.png)
 
 ## Introduction
 
